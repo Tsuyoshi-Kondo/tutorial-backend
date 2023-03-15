@@ -57,13 +57,18 @@ router.put("/:id", async (req: Request, res: Response)  => {
         const BookToUpdate: Book | null = await AppDataSource.getRepository(Book).findOneBy({
             id: parseInt(req.params.id),
         });
-        BookToUpdate!.title = req.body.title;
-        BookToUpdate!.content = req.body.content;
-        await AppDataSource.manager.save(BookToUpdate);
-        const BookToUpdateAfter: Book | null = await AppDataSource.getRepository(Book).findOneBy({
-            id: parseInt(req.params.id),
-        });
-        res.status(200).json(BookToUpdateAfter);
+        if(req.body.hasOwnProperty("title") === false &&
+            req.body.hasOwnProperty("content") === false) 
+                throw new Error();
+        else {
+            if(req.body.hasOwnProperty("title") === true) BookToUpdate!.title = req.body.title;
+            if(req.body.hasOwnProperty("content") === true) BookToUpdate!.content = req.body.content;
+            await AppDataSource.manager.save(BookToUpdate);
+            const BookToUpdateAfter: Book | null = await AppDataSource.getRepository(Book).findOneBy({
+                id: parseInt(req.params.id),
+            });
+            res.status(200).json(BookToUpdateAfter);
+        }
     } catch (error) {
         res.status(400).json(null);
     }
