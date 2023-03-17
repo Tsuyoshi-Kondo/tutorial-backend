@@ -8,15 +8,6 @@ import { checkJwtHasPermission } from "../middleware/checkJwtHasPermission";
 
 const router: Router = express.Router();
 
-// DB接続
-AppDataSource.initialize()
-  .then(() => {
-    console.log("DataSource initialized!!");
-  })
-  .catch((error: Error) => {
-    console.log(error);
-  });
-
 // GETリクエスト（指定ユーザーに紐づいている本の一覧の取得）
 router.get(
   "/:userId",
@@ -85,9 +76,15 @@ router.put(
   checkJwtHasPermission,
   async (req: Request, res: Response) => {
     try {
+      // 本idが存在するか確認
+      await AppDataSource.getRepository(Book)
+        .createQueryBuilder("book")
+        .where("book.id = :id", { id: req.params.bookId })
+        .getOneOrFail();
+      // 更新
       if (
         !Object.prototype.hasOwnProperty.call(req.body, "title") &&
-        !Object.prototype.hasOwnProperty.call(req.body, "content") === false
+        !Object.prototype.hasOwnProperty.call(req.body, "content")
       )
         throw new Error();
       else {
