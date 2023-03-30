@@ -1,7 +1,7 @@
 import express, { Express } from "express";
 
-import routerAuth from "./auth/index";
-import routerContent from "./content/index";
+import routerAuth from "./auth/routes";
+import routerContent from "./content/routes";
 
 const app: Express = express();
 
@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ルーティング
-app.use("/content", routerContent);
 app.use("/auth", routerAuth);
+app.use("/content", routerContent);
 
 export default app;
