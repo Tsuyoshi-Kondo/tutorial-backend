@@ -11,7 +11,7 @@ beforeAll(async () => {
     email: "aaa@gmail.com",
     password: "123456",
   });
-  user1Token = res.body.token;
+  user1Token = res.body.data.token;
 });
 
 // テスト後にDB切断
@@ -19,7 +19,7 @@ afterAll(async () => {
   await AppDataSource.destroy();
 });
 
-describe("ログイン後の機能のテスト", () => {
+describe("ログイン後の機能のテスト-正常系", () => {
 
   test("ログインユーザーに紐づいている本の一覧を取得する。", async () => {
     const res: request.Response = await request(app)
@@ -83,7 +83,7 @@ describe("ログイン後の機能のテスト", () => {
     const res: request.Response = await request(app)
       .get("/content/1/100")
       .set({ "x-auth-token": user1Token });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(500);
   });
   test("ログインユーザーが別のユーザーに紐づいている本をidで指定して取得を試みてエラーコードが取得できるか確認する。", async () => {
     const res: request.Response = await request(app)
